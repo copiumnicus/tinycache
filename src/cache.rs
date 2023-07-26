@@ -2,6 +2,7 @@ use super::store;
 use crate::store::StoreErr;
 use serde::{Deserialize, Serialize};
 use std::{fmt::Debug, time::Duration};
+#[cfg(feature = "tracing")]
 use tracing::{debug, warn};
 
 /// cache with optional max age configuration
@@ -55,6 +56,7 @@ impl TinyRef {
                 return res;
             }
         } else {
+            #[cfg(feature = "tracing")]
             debug!("Ignoring cache on {:?}", k);
         }
         let item_from_fut = fetch_with();
@@ -67,11 +69,13 @@ impl TinyRef {
     {
         let item_key = item_key.to_string();
         if let Err(e) = store::write(self.cache_name.clone(), item_key.clone(), v) {
+            #[cfg(feature = "tracing")]
             warn!(
                 "failed to write to cache `{}` -> `{}` {:?}",
                 item_key, self.cache_name, e
             );
         } else {
+            #[cfg(feature = "tracing")]
             debug!("SAVE `{}` -> `{}`", item_key, self.cache_name);
         }
     }
@@ -87,6 +91,7 @@ impl TinyRef {
         if let Some(max_age) = self.max_cache_age {
             if let Some(age) = self.item_age(item_key.clone()) {
                 if age > max_age {
+                    #[cfg(feature = "tracing")]
                     debug!("CACHE `{}` -> TOO OLD. AGE: {:?}", item_key, age);
                     self.invalidate(item_key);
                     return None;
@@ -98,6 +103,7 @@ impl TinyRef {
             Err(e) => {
                 if let StoreErr::Ser(e) = e {
                     // invalidate the cache
+                    #[cfg(feature = "tracing")]
                     warn!(
                         "Failed to deserialize {:?}, invalidating cache -> `{}`",
                         e, item_key
@@ -110,6 +116,7 @@ impl TinyRef {
     }
     pub fn invalidate(&self, item_key: impl ToString) {
         if let Err(e) = store::remove(self.cache_name.clone(), item_key.to_string()) {
+            #[cfg(feature = "tracing")]
             warn!("Failed to invalidate cache {:?}", e);
         }
     }
