@@ -9,3 +9,4 @@ All the standard stuff that you would expect:
 - [X] invalidates if fails read
 - [X] uri safe with `sha1`
 - [X] ~200 lines
+- [X] 4 deps (serde, bincode, tracing, sha1) 
