@@ -3,6 +3,11 @@ name = "tinycache"
 version = "0.1.0"
 edition = "2021"
 description = "minimal file cache with binary serialization"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/copiumnicus/tinycache"
+repository = "https://github.com/copiumnicus/tinycache"
+keywords = ["cache", "file"]
 
 [dependencies]
 bincode = "1.3.3"
